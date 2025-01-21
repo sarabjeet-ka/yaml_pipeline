@@ -1,0 +1,38 @@
+trigger:
+- main
+
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    pool:
+     name: Default  
+    steps:
+      - task: TerraformTaskV4@4
+        displayName: TF init
+        inputs:
+          provider: 'azurerm'
+          command: 'init'
+          backendServiceArm: 'Azure for Students(7334d5c5-1792-4c31-8a6b-41c0238bab48)'
+          backendAzureRmResourceGroupName: 'sarab-rg'
+          backendAzureRmStorageAccountName: 'statefiles242806200'
+          backendAzureRmContainerName: 'statefile'
+          backendAzureRmKey: 'tfstate'
+      - task: TerraformTaskV4@4
+        displayName: Tf validate
+        inputs:
+          provider: 'azurerm'
+          command: 'validate'
+      - task: TerraformTaskV4@4
+        displayName: TF Plan
+        inputs:
+          provider: 'azurerm'
+          command: 'plan'
+          environmentServiceNameAzureRM: 'Azure for Students(7334d5c5-1792-4c31-8a6b-41c0238bab48)'
+      - task: TerraformTaskV4@4
+        displayName: Tf apply
+        inputs:
+          provider: 'azurerm'
+          command: 'apply'
+          environmentServiceNameAzureRM: 'Azure for Students(7334d5c5-1792-4c31-8a6b-41c0238bab48)'
+    
